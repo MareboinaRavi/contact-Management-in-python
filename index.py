@@ -1,9 +1,15 @@
+'''
+    This Project is Developed by Mr.Ravi
+    If any issues feel free to Ask.
+    mail me @ --> mareboinaravi446@gmail.com
+'''
 from tkinter import *
 import sqlite3
 import tkinter.ttk as ttk
 import tkinter.messagebox as tkMessageBox
 
-#DEVELOPED BY Mareboina Ravi
+#  for more interesting projects:- https://www.github.com/mareboinaravi
+
 root = Tk()
 root.title("Contact List")
 width = 700
@@ -40,13 +46,17 @@ def Database():
     conn.close()
 
 def SubmitData():
-    if  FIRSTNAME.get() == "" or LASTNAME.get() == "" or GENDER.get() == "" or AGE.get() == "" or ADDRESS.get() == "" or CONTACT.get() == "":
+    if  FIRSTNAME.get() == "" or LASTNAME.get() == "" or GENDER.get() == 0 or AGE.get() == "" or ADDRESS.get() == "" or CONTACT.get() == "":
         result = tkMessageBox.showwarning('', 'Please Complete The Required Field', icon="warning")
     else:
         tree.delete(*tree.get_children())
         conn = sqlite3.connect("pythontut.db")
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO `member` (firstname, lastname, gender, age, address, contact) VALUES(?, ?, ?, ?, ?, ?)", (str(FIRSTNAME.get()), str(LASTNAME.get()), str(GENDER.get()), int(AGE.get()), str(ADDRESS.get()), str(CONTACT.get())))
+        if(GENDER.get()== '1'):
+            GENDER.set("Male")
+        else:
+            GENDER.set("Female")
+        cursor.execute("INSERT INTO `member` (firstname, lastname, gender, age, address, contact) VALUES(?, ?, ?, ?, ?, ?)", (str(FIRSTNAME.get()), str(LASTNAME.get()), str(GENDER.get()), str(AGE.get()), str(ADDRESS.get()), str(CONTACT.get())))
         conn.commit()
         cursor.execute("SELECT * FROM `member` ORDER BY `lastname` ASC")
         fetch = cursor.fetchall()
@@ -56,7 +66,7 @@ def SubmitData():
         conn.close()
         FIRSTNAME.set("")
         LASTNAME.set("")
-        GENDER.set("")
+        GENDER.set(1)
         AGE.set("")
         ADDRESS.set("")
         CONTACT.set("")
@@ -92,7 +102,7 @@ def OnSelected(event):
     mem_id = selecteditem[0]
     FIRSTNAME.set("")
     LASTNAME.set("")
-    GENDER.set("")
+    GENDER.set(1)
     AGE.set("")
     ADDRESS.set("")
     CONTACT.set("")
@@ -120,8 +130,8 @@ def OnSelected(event):
     ContactForm = Frame(UpdateWindow)
     ContactForm.pack(side=TOP, pady=10)
     RadioGroup = Frame(ContactForm)
-    Male = Radiobutton(RadioGroup, text="Male", variable=GENDER, value="Male",  font=('arial', 14)).pack(side=LEFT)
-    Female = Radiobutton(RadioGroup, text="Female", variable=GENDER, value="Female",  font=('arial', 14)).pack(side=LEFT)
+    Male = Radiobutton(RadioGroup, text="Male", variable=GENDER, value=1,  font=('arial', 14)).pack(side=LEFT)
+    Female = Radiobutton(RadioGroup, text="Female", variable=GENDER, value=2,  font=('arial', 14)).pack(side=LEFT)
     
     #===================LABELS==============================
     lbl_title = Label(FormTitle, text="Updating Contacts", font=('arial', 16), bg="orange",  width = 300)
@@ -180,7 +190,7 @@ def AddNewWindow():
     global NewWindow
     FIRSTNAME.set("")
     LASTNAME.set("")
-    GENDER.set("")
+    GENDER.set(1)
     AGE.set("")
     ADDRESS.set("")
     CONTACT.set("")
@@ -203,21 +213,21 @@ def AddNewWindow():
     ContactForm = Frame(NewWindow)
     ContactForm.pack(side=TOP, pady=10)
     RadioGroup = Frame(ContactForm)
-    Male = Radiobutton(RadioGroup, text="Male", variable=GENDER, value="Male",  font=('arial', 14)).pack(side=LEFT)
-    Female = Radiobutton(RadioGroup, text="Female", variable=GENDER, value="Female",  font=('arial', 14)).pack(side=LEFT)
+    Male = Radiobutton(RadioGroup, text="Male", variable=GENDER, value=1,  font=('arial', 14)).pack(side=LEFT)
+    Female = Radiobutton(RadioGroup, text="Female", variable=GENDER, value=2,  font=('arial', 14)).pack(side=LEFT)
     
     #===================LABELS==============================
     lbl_title = Label(FormTitle, text="Adding New Contacts", font=('arial', 16), bg="#66ff66",  width = 300)
     lbl_title.pack(fill=X)
-    lbl_firstname = Label(ContactForm, text="First_name", font=('arial', 14), bd=5)
+    lbl_firstname = Label(ContactForm, text="Firstname", font=('arial', 14), bd=5)
     lbl_firstname.grid(row=0, sticky=W)
-    lbl_lastname = Label(ContactForm, text="Last_name", font=('arial', 14), bd=5)
+    lbl_lastname = Label(ContactForm, text="Lastname", font=('arial', 14), bd=5)
     lbl_lastname.grid(row=1, sticky=W)
     lbl_gender = Label(ContactForm, text="Gender", font=('arial', 14), bd=5)
     lbl_gender.grid(row=2, sticky=W)
     lbl_age = Label(ContactForm, text="Age", font=('arial', 14), bd=5)
     lbl_age.grid(row=3, sticky=W)
-    lbl_address = Label(ContactForm, text="Address:", font=('arial', 14), bd=5)
+    lbl_address = Label(ContactForm, text="Address", font=('arial', 14), bd=5)
     lbl_address.grid(row=4, sticky=W)
     lbl_contact = Label(ContactForm, text="Contact", font=('arial', 14), bd=5)
     lbl_contact.grid(row=5, sticky=W)
@@ -239,8 +249,6 @@ def AddNewWindow():
     #==================BUTTONS==============================
     btn_addcon = Button(ContactForm, text="Save", width=50, command=SubmitData)
     btn_addcon.grid(row=6, columnspan=2, pady=10)
-
-
 
 
     
@@ -266,7 +274,7 @@ lbl_title.pack(fill=X)
 #============================BUTTONS=====================================
 btn_add = Button(MidLeft, text="+ ADD NEW", bg="#66ff66", command=AddNewWindow)
 btn_add.pack()
-btn_delete = Button(MidRight, text="DELETE", bg="red", command=DeleteData)
+btn_delete = Button(MidRight, text="DELETE", bg="aqua", command=DeleteData)
 btn_delete.pack(side=RIGHT)
 
 #============================TABLES======================================
@@ -299,4 +307,3 @@ tree.bind('<Double-Button-1>', OnSelected)
 if __name__ == '__main__':
     Database()
     root.mainloop()
-    
